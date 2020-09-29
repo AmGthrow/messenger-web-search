@@ -122,18 +122,6 @@ def run_search(message, num=10):
     return responses
 
 
-def typing(recipient_id, wait=0.5, type=1.5):
-        time.sleep(wait)
-        bot.send_action(recipient_id, 'typing_on')
-        time.sleep(type)
-        bot.send_action(recipient_id, 'typing_off')
-
-
-def take_thread_control(recipient_id):
-    res = requests.post(f"https://graph.facebook.com/v2.6/me/take_thread_control?access_token={ACCESS_TOKEN}",
-    data = [('recipient', "{'id':%s}"%recipient_id)])
-
-
 if __name__ == '__main__':
     app.run()
 
