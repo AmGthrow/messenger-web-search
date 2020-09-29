@@ -5,6 +5,7 @@ import requests
 from flask import Flask, request
 from pymessenger.bot import Bot
 import search
+import openURL
 
 config_file = open('config.json')
 config_values = json.load(config_file)
@@ -81,7 +82,11 @@ def handle_message(recipient_id, message, profile):
     if message.get('text'):
         # if the user sent a message containing text
         bot.send_text_message(recipient_id, f"Message received: {message.get('text')}")
-        responses = run_search(message.get('text'))
+        try:
+            responses = openURL.compose_message(message.get('text'))
+            # responses = ["Opening URL"]
+        except:
+            responses = run_search(message.get('text'))
         for response in responses:
             bot.send_text_message(recipient_id, response)
 
