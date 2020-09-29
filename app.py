@@ -4,6 +4,7 @@ import random
 import requests
 from flask import Flask, request
 from pymessenger.bot import Bot
+import search
 
 config_file = open('config.json')
 config_values = json.load(config_file)
@@ -15,8 +16,6 @@ ACCESS_TOKEN = config_values["Facebook"]["ACCESS_TOKEN"]
 VERIFY_TOKEN = config_values["Facebook"]["VERIFY_TOKEN"]
 bot = Bot(ACCESS_TOKEN)
 
-users = {}
-MENU_ITEMS = ['beef_bibimbap', 'beef_gyudon']
 
 # Receive requests from Facebook
 @app.route('/', methods=['GET', 'POST'])
@@ -38,8 +37,6 @@ def receive_message():
                 profile = requests.get(
                     f'https://graph.facebook.com/{recipient_id}?fields=first_name,last_name,profile_pic&access_token={ACCESS_TOKEN}'
                 ).json()
-                if recipient_id not in users:
-                    users[recipient_id] = Customer(recipient_id)
                 if message.get('postback'):
                     handle_postback(recipient_id, message.get('postback'), profile)
                 elif message.get('message'):
@@ -63,27 +60,63 @@ def handle_postback(recipient_id, message, profile):
     payload = message.get('payload')
     bot.send_action(recipient_id, 'mark_seen')
 
-    response = "I don't have a protocol for that postback {%s} yet"%payload
-    bot.send_text_message(recipient_id, response)
+    if payload == 'get_started':
+        response = "Hey dude!"
+        bot.send_text_message(recipient_id, response)
+    else:
+        response = "I don't know how to reply to that: %s"%payload
+        bot.send_text_message(recipient_id, response)
+    return
 
 
 def handle_quick_reply(recipient_id, message, profile):
     payload = message['quick_reply'].get('payload')
 
-    response = "I don't have a protocol for that quick reply {%s} yet"%payload
+    response = "I don't know how to reply to that: %s"%payload
     bot.send_text_message(recipient_id, response)
+    return
 
 
 def handle_message(recipient_id, message, profile):
     if message.get('text'):
         # if the user sent a message containing text
-        response = "I'll try running a google search."
-        bot.send_text_message(recipient_id, response)
+        bot.send_text_message(recipient_id, f"Message received: {message.get('text')}")
+        responses = run_search(message.get('text'))
+        for response in responses:
+            bot.send_text_message(recipient_id, response)
 
     elif message.get('attachments'):
         # if the user sent a message containing an attachment
         response = "Sorry, I can't process images and attachments yet."
         bot.send_text_message(recipient_id, response)
+    return
+
+
+def run_search(message, num=10):
+    '''
+    runs a google search with the query <message> and retrieves the first <num> results
+
+    Input: 
+        message - a string containing the google search query
+        num - the number of results to retrieve
+    
+    Output:
+        an array of strings which are at most 2000 characters long each containing search results
+    '''
+    results = search.google_query(message, num=10)  
+    for i in range(len(results)):   # Extracts relevant info from the search results so it's human-readable
+        result = results[i]
+        results[i] = ('\n\n' + ('-'*40) + '\n' + result['title'] + f'\n({result["link"]})' + '\n\n' +  result['snippet'])
+
+    responses = []
+    response = ''
+    for result in results:
+        if len(response + result) > 2000:   # facebook only lets me send 2000 chars at max 
+            responses.append(response)
+            response = ''
+        response += result
+    responses.append(response)  #The last one is guaranteed to be less than 2000 characters, so I append it to responses
+    return responses
 
 
 def typing(recipient_id, wait=0.5, type=1.5):
