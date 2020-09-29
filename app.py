@@ -1,20 +1,19 @@
-import json
 import time
 import random
 import requests
+import os
+from dotenv import load_dotenv
 from flask import Flask, request
 from pymessenger.bot import Bot
 import search
 import openURL
 
-config_file = open('config.json')
-config_values = json.load(config_file)
-config_file.close()
+load_dotenv()
+APP_ID = os.getenv("APP_ID")
+ACCESS_TOKEN = os.getenv("FB_ACCESS_TOKEN")
+VERIFY_TOKEN = os.getenv("FB_VERIFY_TOKEN")
 
 app = Flask(__name__)
-APP_ID = 346924202972294
-ACCESS_TOKEN = config_values["Facebook"]["ACCESS_TOKEN"]
-VERIFY_TOKEN = config_values["Facebook"]["VERIFY_TOKEN"]
 bot = Bot(ACCESS_TOKEN)
 
 

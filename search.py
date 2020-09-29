@@ -1,13 +1,11 @@
 from googleapiclient.discovery import build   #Import the library
-import json
-import pprint
+import os
+from dotenv import load_dotenv
 
-config_file = open('config.json')
-config_values = json.load(config_file)
-config_file.close()
+load_dotenv()
+api_key = os.getenv("GOOGLE_API_KEY")
+cse_id = os.getenv("GOOGLE_CSE_ID")
 
-api_key = config_values['Google']['API_KEY']
-cse_id = config_values['Google']['CSE_ID']
 def google_query(query, api_key=api_key, cse_id=cse_id, **kwargs):
     query_service = build("customsearch", 
                           "v1", 
