@@ -1,5 +1,4 @@
 import time
-import random
 import requests
 import os
 from dotenv import load_dotenv
