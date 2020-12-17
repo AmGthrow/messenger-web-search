@@ -4,7 +4,10 @@ import re
 
 # Gets the raw text from the html file of the url
 def get_text_from_url(url):
-    res = requests.get(url)
+    try:
+        res = requests.get(url)
+    except:
+        raise Exception('Not a URL')
     soup = BeautifulSoup(res.text, "html.parser")
     text = soup.text
     textRegex = re.compile("(\n)+")
