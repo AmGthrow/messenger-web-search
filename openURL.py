@@ -5,9 +5,8 @@ import re
 def get_text_from_url(url):
     res = requests.get(url)
     soup = BeautifulSoup(res.text, "html.parser")
-    text = soup.body.text
+    text = soup.text
     textRegex = re.compile("(\n)+")
-
     return ''.join(textRegex.split(text))
 
 def list_of_strings_from_soup(text):
