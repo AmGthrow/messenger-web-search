@@ -85,10 +85,9 @@ def verify_fb_token(token_sent):
 
 def handle_postback(recipient_id, message):
     payload = message.get('payload')
-    bot.send_action(recipient_id, 'mark_seen')
 
     if payload == 'get_started':
-        response = "Hey dude!"
+        response = "Hello there! Send me something to search, or give me a URL to try visiting."
         bot.send_text_message(recipient_id, response)
     else:
         response = "I don't know how to reply to that: %s"%payload
