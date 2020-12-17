@@ -142,7 +142,7 @@ def run_search(message, num=10):
 
     for i in range(len(results)):   # Extracts relevant info from the search results so it's human-readable
         result = results[i]
-        results[i] = ('\n\n' + ('-'*40) + '\n' + result['title'] + f'\n({result["link"]})' + '\n\n' +  result['snippet'])
+        results[i] = ('\n\n' + ('-'*40) + '\n' + result['title'] + f'\n{result["link"]}' + '\n\n' +  result['snippet'])
 
     responses = []
     response = ''
