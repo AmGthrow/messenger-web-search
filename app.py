@@ -136,7 +136,7 @@ def run_search(message, num=10):
     '''
     results = search.google_query(message, num=10)  
     if results is None:
-        return["Sorry! I can only do a finite number of searches per day and I'm all out."]
+        return["Sorry! I can only do a finite number of searches per day and I'm all out. You can still send me URLs though!"]
     if results == []:
         return["Couldn't find any results."]
 
