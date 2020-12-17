@@ -9,6 +9,17 @@ import search
 import openURL
 import shelve
 
+import logging
+
+logging.basicConfig( format='%(name)s - %(levelname)s - %(message)s', level = logging.ERROR)
+logger = logging.getLogger('app.py')
+logger.setLevel(logging.INFO)
+logger.addHandler(logging.FileHandler('messages.log'))
+# filename='messages.log', filemode='w',
+
+logger.info(f"{str(datetime.now())} - NEW INSTANCE OF app.py")
+logger.info('-' * 40)
+
 load_dotenv()
 APP_ID = os.getenv("APP_ID")
 ACCESS_TOKEN = os.getenv("FB_ACCESS_TOKEN")
@@ -43,10 +54,10 @@ def receive_message():
                         timelog.append(time.time())
                     except KeyError: # means that db[recipient_id] doesn't exist yet
                         db[recipient_id] = timelog = [time.time()]
-                    print(str(timelog))
 
                     if len(timelog) > 3:
                         if time.time() - timelog[0] < 30:
+                            logger.warning(f"{datetime.now()} - WARN - {recipient_id} - WARNED FOR SPAM")
                             response = "Sorry! You've sent too many requests really quickly. Please wait %s more second/s."%(int((30 + timelog[0]) - time.time()) + 1)
                             timelog[1] += 15
                             bot.send_text_message(recipient_id, response)
