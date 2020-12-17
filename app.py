@@ -7,7 +7,7 @@ from flask import Flask, request
 from pymessenger.bot import Bot
 import search
 import openURL
-
+import shelve
 import logging
 
 logging.basicConfig( format='%(name)s - %(levelname)s - %(message)s', level = logging.ERROR)
