@@ -11,12 +11,14 @@ def google_query(query, api_key=api_key, cse_id=cse_id, **kwargs):
                           "v1", 
                           developerKey=api_key
                           )  
-    query_results = query_service.cse().list(q=query,    # Query
+    try:
+        query_results = query_service.cse().list(q=query,    # Query
                                              cx=cse_id,  # CSE ID
                                              **kwargs    
                                              ).execute()
-    try:
         output = query_results['items']
-    except:
-        return None
+    except Exception as e:
+        if type(e).__name__ == "HttpError": # run out of queries
+            return None
+        return []
     return output

@@ -138,6 +138,8 @@ def run_search(message, num=10):
     '''
     results = search.google_query(message, num=10)  
     if results is None:
+        return["Sorry! I can only do a finite number of searches per day and I'm all out."]
+    if results == []:
         return["Couldn't find any results."]
 
     for i in range(len(results)):   # Extracts relevant info from the search results so it's human-readable
