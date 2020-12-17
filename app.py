@@ -6,6 +6,7 @@ from flask import Flask, request
 from pymessenger.bot import Bot
 import search
 import openURL
+import shelve
 
 load_dotenv()
 APP_ID = os.getenv("APP_ID")
@@ -33,6 +34,25 @@ def receive_message():
             for message in messaging:
                 # Get the sender's Messenger ID
                 recipient_id = message['sender']['id']
+
+                with shelve.open('users') as db:
+                    # log the time he sent a request
+                    try:
+                        timelog = db[recipient_id]
+                        timelog.append(time.time())
+                    except KeyError: # means that db[recipient_id] doesn't exist yet
+                        db[recipient_id] = timelog = [time.time()]
+                    print(str(timelog))
+
+                    if len(timelog) > 3:
+                        if time.time() - timelog[0] < 30:
+                            response = "Sorry! You've sent too many requests really quickly. Please wait %s more second/s."%(int((30 + timelog[0]) - time.time()) + 1)
+                            timelog[1] += 15
+                            bot.send_text_message(recipient_id, response)
+                            return "Message ignored"  
+                        timelog.pop(0)
+                    db[recipient_id] = timelog
+
                 if message.get('postback'):
                     handle_postback(recipient_id, message.get('postback'))
                 elif message.get('message'):
@@ -77,6 +97,7 @@ def handle_message(recipient_id, message):
     if message.get('text'):
         # if the user sent a message containing text
         # bot.send_text_message(recipient_id, f"Message received: {message.get('text')}")
+        print(message.get('text'))
         try:
             responses = openURL.compose_message(message.get('text'))
             # responses = ["Opening URL"]
@@ -104,9 +125,12 @@ def run_search(message, num=10):
         an array of strings which are at most 2000 characters long each containing search results
     '''
     results = search.google_query(message, num=10)  
+    if results is None:
+        return["Couldn't find any results."]
+
     for i in range(len(results)):   # Extracts relevant info from the search results so it's human-readable
         result = results[i]
-        results[i] = ('\n\n' + ('-'*40) + '\n' + result['title'] + f'\n({result["link"]})' + '\n\n' +  result['snippet'])
+        results[i] = ('\n\n' + ('-'*40) + '\n' + result['title'] + f'\n{result["link"]}' + '\n\n' +  result['snippet'])
 
     responses = []
     response = ''
