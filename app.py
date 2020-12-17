@@ -79,7 +79,7 @@ def handle_quick_reply(recipient_id, message, profile):
 def handle_message(recipient_id, message, profile):
     if message.get('text'):
         # if the user sent a message containing text
-        bot.send_text_message(recipient_id, f"Message received: {message.get('text')}")
+        # bot.send_text_message(recipient_id, f"Message received: {message.get('text')}")
         try:
             responses = openURL.compose_message(message.get('text'))
             # responses = ["Opening URL"]
