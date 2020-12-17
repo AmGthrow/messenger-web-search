@@ -15,8 +15,4 @@ def google_query(query, api_key=api_key, cse_id=cse_id, **kwargs):
                                              cx=cse_id,  # CSE ID
                                              **kwargs    
                                              ).execute()
-    try:
-        output = query_results['items']
-    except:
-        return None
-    return output
+    return query_results['items']
