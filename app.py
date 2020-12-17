@@ -1,4 +1,5 @@
 import time
+from datetime import datetime
 import requests
 import os
 from dotenv import load_dotenv
@@ -97,7 +98,7 @@ def handle_message(recipient_id, message):
     if message.get('text'):
         # if the user sent a message containing text
         # bot.send_text_message(recipient_id, f"Message received: {message.get('text')}")
-        print(message.get('text'))
+        logger.info(f"{str(datetime.now())} - INFO - {recipient_id} - \"{message.get('text')}\"")
         try:
             responses = openURL.compose_message(message.get('text'))
             # responses = ["Opening URL"]
