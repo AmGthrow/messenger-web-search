@@ -2,6 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 import re
 
+# Gets the raw text from the html file of the url
 def get_text_from_url(url):
     res = requests.get(url)
     soup = BeautifulSoup(res.text, "html.parser")
@@ -9,8 +10,9 @@ def get_text_from_url(url):
     textRegex = re.compile("(\n)+")
     return ''.join(textRegex.split(text))
 
+# I can't just send the text in one big string, so I partition them into slices to send to FB
 def list_of_strings_from_soup(text):
-    n = 2000
+    n = 2000    # n is the length of each "chunk" of string
     return [text[i:i+n] for i in range(0, len(text), n)]
 
 def compose_message(url):
