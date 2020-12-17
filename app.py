@@ -33,16 +33,13 @@ def receive_message():
             for message in messaging:
                 # Get the sender's Messenger ID
                 recipient_id = message['sender']['id']
-                profile = requests.get(
-                    f'https://graph.facebook.com/{recipient_id}?fields=first_name,last_name,profile_pic&access_token={ACCESS_TOKEN}'
-                ).json()
                 if message.get('postback'):
-                    handle_postback(recipient_id, message.get('postback'), profile)
+                    handle_postback(recipient_id, message.get('postback'))
                 elif message.get('message'):
                     if message['message'].get('quick_reply'):
-                        handle_quick_reply(recipient_id, message.get('message'), profile)
+                        handle_quick_reply(recipient_id, message.get('message'))
                     else:
-                        handle_message(recipient_id, message.get('message'), profile)
+                        handle_message(recipient_id, message.get('message'))
 
         return "Message Processed"
 
@@ -55,7 +52,7 @@ def verify_fb_token(token_sent):
     return 'Invalid verification token'
 
 
-def handle_postback(recipient_id, message, profile):
+def handle_postback(recipient_id, message):
     payload = message.get('payload')
     bot.send_action(recipient_id, 'mark_seen')
 
@@ -68,7 +65,7 @@ def handle_postback(recipient_id, message, profile):
     return
 
 
-def handle_quick_reply(recipient_id, message, profile):
+def handle_quick_reply(recipient_id, message):
     payload = message['quick_reply'].get('payload')
 
     response = "I don't know how to reply to that: %s"%payload
@@ -76,7 +73,7 @@ def handle_quick_reply(recipient_id, message, profile):
     return
 
 
-def handle_message(recipient_id, message, profile):
+def handle_message(recipient_id, message):
     if message.get('text'):
         # if the user sent a message containing text
         # bot.send_text_message(recipient_id, f"Message received: {message.get('text')}")
