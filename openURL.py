@@ -1,3 +1,7 @@
+"""
+this script retrieves the raw HTML of a given page and formats it into a list of messenger-friendly strings
+"""
+
 import requests
 from bs4 import BeautifulSoup
 import re
