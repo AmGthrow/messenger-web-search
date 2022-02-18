@@ -5,9 +5,11 @@
 
 # Usage
 You can send a message as a string and the bot will perform a Google search for you with a list of links and descriptions.
+
 ![search query example](./docs/images/searchExample.png "Sample result from search query")
 
 From the list of results, you can also retrieve a specific webpage. The bot will scrape that URL and return the contents to you as plaintext.
+
 ![image example of retrieving a page](./docs/images/URLExample.png "Sample result from a URL")
 
 # Setting Up
