@@ -1,9 +1,14 @@
+"""
+performs the google search using https://developers.google.com/docs/api/quickstart/python
+"""
+
+
 from googleapiclient.discovery import build   #Import the library
 import os
 from dotenv import load_dotenv
 
 load_dotenv()
-api_key = os.getenv("GOOGLE_API_KEY")
+api_key = os.getenv("GOOGLE_API_KEY")   # get an api key from https://developers.google.com/custom-search/v1/overview
 cse_id = os.getenv("GOOGLE_CSE_ID")
 
 def google_query(query, api_key=api_key, cse_id=cse_id, **kwargs):
